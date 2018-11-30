@@ -62,39 +62,71 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 		<main class="py-5">
 			<div class="container">
-				<h1 class="text-center">Halaman Penerimaan: Proses</h1>
+				<h1 class="text-center">Halaman Pengeluaran: <?php echo $id_jenis == null ? 'Seluruhnya' : 'Sebagian'; ?></h1>
 				<section id="home">
-					<h3>DESKRIPSI -> <?php echo $tgl; ?> || <?php echo $jenis; ?></h3>
+                    <div class="float-right">
+                        <div class="form-row">
+                            <div class="col">
+                                <input type="text" readonly class="form-control-plaintext text-right" value="Search">
+                            </div>
+                            <div class="col-auto">
+                                <input type="text" id="input-search" class="form-control" autofocus>
+                            </div>
+                        </div>
+                    </div>
 
-					<form method="post" action="<?php echo site_url('Penerimaan/simpan'); ?>">
-						<!-- input untuk tgl dan jenis -->
-						<input type="hidden" name="tgl" value="<?php echo $tgl; ?>">
-						<input type="hidden" name="id_jenis" value="<?php echo $id_jenis; ?>">
-
-						<table class="table table-bordered table-striped table-hover">
-							<thead>
-								<th>NO. BOX</th>
-								<th>UNIT</th>
-								<th>KILOGRAM</th>
-							</thead>
-							<tbody>
-								<?php
-									for ($i = 0; $i < $jumlah; $i++)
-									{
-										?>
-											<tr>
-												<td><input type="text" name="nomor[]"></td>
-												<td><input type="text" name="unit[]"></td>
-												<td><input type="text" name="kilogram[]"></td>
-											</tr>
-										<?php
-									}
-								?>
-							</tbody>
-						</table>
-
-						<button type="submit" id="btn-submit" class="btn btn-primary">SAVE</button>
-					</form>
+                    <table id="table-data" class="table table-bordered table-striped table-hover">
+                    <?php
+                    if ($id_jenis == null)
+                    {
+                        ?>
+                            <thead>
+                                <th>TANGGAL PRODUKSI</th>
+                                <th>JENIS</th>
+                                <th>JUMLAH UNIT</th>
+                                <th>JUMLAH KILOGRAM</th>
+                            </thead>
+                            <tbody>
+                                <?php
+                                foreach ($total_penerimaan as $tp)
+                                {
+                                    ?>
+                                    <tr>
+                                        <td><?php echo date('d F y', strtotime($tp->tgl)); ?></td>
+                                        <td><a href="<?php echo site_url('Pengeluaran/seluruhnya?tgl='.$tgl.'&id_namapt='.$id_namapt.'&id_jenis='.$tp->id_jenis); ?>"><?php echo $tp->nama_jenis; ?></a></td>
+                                        <td><?php echo $tp->total_unit; ?></td>
+                                        <td><?php echo $tp->total_kilogram; ?></td>
+                                    </tr>
+                                    <?php
+                                }
+                                ?>
+                            </tbody>
+                        <?php
+                    }
+                    else
+                    {
+                        ?>
+                            <thead>
+                                <th>TANGGAL PRODUKSI</th>
+                                <th>NO. BOX</th>
+                            </thead>
+                            <tbody>
+                                <?php
+                                foreach ($total_penerimaan as $tp)
+                                {
+                                    ?>
+                                    <tr>
+                                        <td><?php echo date('d F y', strtotime($tp->tgl)); ?></td>
+                                        <td><a href="<?php echo site_url('Pengeluaran/sebagian?tgl='.$tgl.'&id_namapt='.$id_namapt.'&id_jenis='.$id_jenis.'&no_box='.$tp->no_box); ?>"><?php echo $tp->no_box; ?></a></td>
+                                    </tr>
+                                    <?php
+                                }
+                                ?>
+                            </tbody>
+                        <?php
+                    }
+                    ?>
+                    </table>
 				</section>
 			</div>
 		</main>
@@ -114,6 +146,32 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 		<script src="<?php echo base_url();?>assets/vendor/jquery/jquery.min.js"></script>
 		<script src="<?php echo base_url();?>assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
+        <script>
+            $("#input-search").keyup(function() {
+                filter_table();
+            });
+
+            function filter_table() {
+                // Declare variables
+                var input, filter, table, tr, td, i;
+                input = document.getElementById("input-search");
+                filter = input.value.toUpperCase();
+                table = document.getElementById("table-data");
+                tr = table.getElementsByTagName("tr");
+
+                // Loop through all table rows, and hide those who don't match the search query
+                for (i = 0; i < tr.length; i++) {
+                    td = tr[i].getElementsByTagName("td")[1];
+                    if (td) {
+                        if (td.textContent.toUpperCase().indexOf(filter) > -1) {
+                            tr[i].style.display = "";
+                        } else {
+                            tr[i].style.display = "none";
+                        }
+                    }
+                }
+            }
+        </script>
 	</body>
 
 </html>

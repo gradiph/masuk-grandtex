@@ -62,43 +62,37 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 		<main class="py-5">
 			<div class="container">
-				<h1 class="text-center">Halaman Penerimaan</h1>
+				<h1 class="text-center">Halaman Pengeluaran: Sebagian</h1>
 				<section id="home">
-					<form method="get" action="<?php echo site_url('Penerimaan/proses'); ?>">
-						<div class="form-group row">
-							<label for="input-tgl" class="offset-2 col-4 col-form-label">TANGGAL PRODUKSI</label>
-							<div class="col-4">
-								<input type="date" name="tgl" id="input-tgl" class="form-control" value="<?php echo date('Y-m-d'); ?>">
-							</div>
-						</div>
-
-						<div class="form-group row">
-							<label for="input-id_jenis" class="offset-2 col-4 col-form-label">JENIS</label>
-							<div class="col-4">
-								<select name="id_jenis" id="input-id_jenis" class="form-control">
-									<?php
-										foreach ($jenis as $j)
-										{
-											?>
-												<option value="<?php echo $j->id_jenis; ?>"><?php echo $j->nama; ?></option>
-											<?php
-										}
-									?>
-								</select>
-							</div>
-						</div>
-
-						<div class="form-group row">
-							<label for="input-jumlah" class="offset-2 col-4 col-form-label">JUMLAH BOX</label>
-							<div class="col-4">
-								<input type="number" name="jumlah" id="input-jumlah" class="form-control" value="1">
-							</div>
-						</div>
-
-						<div class="form-group text-center">
-							<button type="submit" id="btn-submit" class="btn btn-primary">NEXT</button>
-						</div>
-					</form>
+                    <form id="form-pengeluaran" action="<?php echo site_url('Pengeluaran/simpan'); ?>" method="post">
+                        <input type="hidden" name="tgl" value="<?php echo $tgl; ?>">
+                        <input type="hidden" name="id_namapt" value="<?php echo $id_namapt; ?>">
+                        <input type="hidden" name="id_jenis" value="<?php echo $id_jenis; ?>">
+                        <table class="table table-bordered table-striped table-hover">
+                            <thead>
+                                <th>NO. BOX</th>
+                                <th>UNIT</th>
+                                <th>KILOGRAM</th>
+                            </thead>
+                            <tbody>
+                                <?php
+                                foreach ($penerimaan as $p)
+                                {
+                                    ?>
+                                    <tr>
+                                        <td><input type="text" name="no_box[]" class="form-control" value="<?php echo $p->no_box; ?>" readonly></td>
+                                        <td><input type="text" name="unit[]" class="form-control" value="<?php echo $p->unit; ?>"></td>
+                                        <td><input type="text" name="kilogram[]" class="form-control" value="<?php echo $p->kilogram; ?>"></td>
+                                    </tr>
+                                    <?php
+                                }
+                                ?>
+                            </tbody>
+                        </table>
+                        <div class="form-group">
+                            <button type="submit" id="btn-submit" class="btn btn-primary">Save</button>
+                        </div>
+                    </form>
 				</section>
 			</div>
 		</main>
@@ -118,6 +112,27 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 		<script src="<?php echo base_url();?>assets/vendor/jquery/jquery.min.js"></script>
 		<script src="<?php echo base_url();?>assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
+        <script>
+            $("#form-pengeluaran").submit(function (e) {
+                //ignore if checkbox is not checked
+                $("#form-pengeluaran tbody > tr").each(function () {
+                    var tr = $(this),
+                        inputs = tr.find("input[type=text]"),
+                        checkbox = tr.find("input[type=checkbox]");
+
+                    if (! checkbox.is(":checked")) {
+                        inputs.each(function () {
+                            $(this).attr("form", "none");
+                        });
+                    }
+                    else {
+                        inputs.each(function() {
+                            $(this).attr("form", "form-pengeluaran");
+                        });
+                    }
+                });
+            });
+        </script>
 	</body>
 
 </html>

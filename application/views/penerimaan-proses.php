@@ -64,7 +64,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 			<div class="container">
 				<h1 class="text-center">Halaman Penerimaan: Proses</h1>
 				<section id="home">
-					<h3>DESKRIPSI -> <?php echo $tgl; ?> || <?php echo $jenis; ?></h3>
+					<h3>DESKRIPSI -> <?php echo $tgl; ?> || <?php echo $nama_jenis; ?></h3>
 
 					<form method="post" action="<?php echo site_url('Penerimaan/simpan'); ?>">
 						<!-- input untuk tgl dan jenis -->
@@ -83,7 +83,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 									{
 										?>
 											<tr>
-												<td><input type="text" name="nomor[]"></td>
+												<td><input type="text" name="no_box[]"></td>
 												<td><input type="text" name="unit[]"></td>
 												<td><input type="text" name="kilogram[]"></td>
 											</tr>
